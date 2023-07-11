@@ -3,8 +3,8 @@ const users = require("./json/users.json");
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  user: 'postgres',
-  password: 'pass',
+  user: 'vagrant',
+  password: '123',
   host: 'localhost',
   database: 'lightbnb'
 });
@@ -19,14 +19,19 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function (email) {
-  let resolvedUser = null;
-  for (const userId in users) {
-    const user = users[userId];
-    if (user?.email.toLowerCase() === email?.toLowerCase()) {
-      resolvedUser = user;
-    }
-  }
-  return Promise.resolve(resolvedUser);
+  const promise = pool
+    .query(`SELECT * FROM users WHERE email = $1`, [ email ])
+      .then((result) => {
+        if (result.rows[0] === undefined) {
+          return null;
+        } 
+        console.log(result.rows[0]);
+        return result.rows[0];
+      })
+      .catch((error) => {
+        console.log(error.message);
+      })
+  return promise;
 };
 
 /**
@@ -35,7 +40,19 @@ const getUserWithEmail = function (email) {
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function (id) {
-  return Promise.resolve(users[id]);
+  const promise = pool
+  .query(`SELECT * FROM users WHERE id = $1`, [ id ])
+    .then((result) => {
+      if (result.rows[0] === undefined) {
+        return Promise.resolve(null);
+      } 
+      console.log(result.rows[0]);
+      return Promise.resolve(result.rows[0]);
+    })
+    .catch((error) => {
+      return Promise.reject(error)
+    })
+return promise;
 };
 
 /**
@@ -44,10 +61,13 @@ const getUserWithId = function (id) {
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser = function (user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  const promise = pool
+    .query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *`, [ user.name, user.email, user.password ])
+      .then((result) => {
+        return Promise.resolve(result.rows[0])
+      })
+
+  return promise;
 };
 
 /// Reservations
