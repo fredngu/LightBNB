@@ -30,7 +30,7 @@ Finds the listing that match the criteria inputted by the user
 ![Search - LightBNB](https://github.com/fredngu/LightBNB/assets/125424601/47838493-dd66-4ec3-a8fb-1e587b127dcb)
 
 ## Create User
-Adds a new user into the users database \
+Adds a new user into the users database from the user's input
 
 ![Create User - LightBNB](https://github.com/fredngu/LightBNB/assets/125424601/ec6daa6b-d970-4b92-a98d-bf98bb3ef123)
 ![Create User SQL](https://github.com/fredngu/LightBNB/assets/125424601/8ab9d39d-3709-42f4-acc8-8724b13a9e78)
